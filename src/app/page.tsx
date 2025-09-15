@@ -2,6 +2,10 @@
 
 import styled from "styled-components";
 import Image from "next/image";
+import Testimonials from "@/components/Testimonials";
+import Gallery from "@/components/Gallery";
+import Events from "@/components/Events";
+import Button from "@/components/Button";
 
 const Page = styled.main`
     max-width: 1200px;
@@ -32,6 +36,7 @@ const HeroOverlay = styled.div`
 `;
 
 const HeroTitle = styled.h1`
+    text-align: center;
     font-size: clamp(1.8rem, 3.5vw, 3rem);
     line-height: 1.2;
     font-weight: 700;
@@ -39,19 +44,9 @@ const HeroTitle = styled.h1`
     margin-bottom: 0.75rem;
 `;
 
-const CTA = styled.button`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    background: var(--primary, #cf3201);
-    color: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
-    cursor: pointer;
-    transition: background .2s ease;
-    &:hover { background: var(--secondary, #ff7642); }
+const CTA = styled(Button).attrs({ size: "lg" as const, variant: "primary" as const })`
+    /* prevent flex container from stretching it to full width */
+    align-self: flex-start;
 `;
 
 const Grid = styled.section`
@@ -82,33 +77,9 @@ const Muted = styled.p`
     color: #6b5b53;
 `;
 
-const TwoCol = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    @media (max-width: 700px) {
-        grid-template-columns: 1fr;
-    }
-`;
+/* Table moved into components/Events.tsx */
 
-const Table = styled.table`
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-    td, th { padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); }
-    th { text-align: left; color: var(--primary, #cf3201); font-weight: 700; }
-`;
-
-const SmallButton = styled.button`
-    padding: 0.4rem 0.6rem;
-    border-radius: 7px;
-    background: var(--primary, #cf3201);
-    color: #fff;
-    border: 1px solid rgba(0,0,0,0.06);
-    cursor: pointer;
-    transition: opacity .2s ease;
-    &:hover { opacity: .95; background: var(--secondary, #ff7642); }
-`;
+const SmallButton = styled(Button).attrs({ size: "sm" as const, variant: "outline" as const })``;
 
 export default function Home() {
     return (
@@ -125,7 +96,9 @@ export default function Home() {
                 />
                 <HeroOverlay>
                     <HeroTitle>
-                        Danser, apprendre, partager – partout, ensemble !
+                        Danser, apprendre, partager 
+                        <br />
+                        We are together !
                     </HeroTitle>
                     <CTA>Voir les prochains évènements</CTA>
                 </HeroOverlay>
@@ -141,83 +114,13 @@ export default function Home() {
                     </div>
                 </Card>
 
-                <Card>
-                    <SectionTitle>Événements à venir</SectionTitle>
-                    <Table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Ville</th>
-                                <th>Style</th>
-                                <th>Niveau</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>12 mai</td>
-                                <td>Lyon</td>
-                                <td>Salsa</td>
-                                <td>Débutant</td>
-                                <td><SmallButton>Détails</SmallButton></td>
-                            </tr>
-                            <tr>
-                                <td>22 mai</td>
-                                <td>Bordeaux</td>
-                                <td>Zouk</td>
-                                <td>Inter</td>
-                                <td><SmallButton>Détails</SmallButton></td>
-                            </tr>
-                            <tr>
-                                <td>5 juin</td>
-                                <td>Marseille</td>
-                                <td>Mix</td>
-                                <td>Tous niveaux</td>
-                                <td><SmallButton>Détails</SmallButton></td>
-                            </tr>
-                        </tbody>
-                    </Table>
-                    <div style={{ marginTop: 10 }}>
-                        <SmallButton>Voir tous les évènements</SmallButton>
-                    </div>
-                </Card>
+                <Events />
             </Grid>
 
             {/* Testimonials + Gallery */}
             <Grid style={{ gridTemplateColumns: "1fr 1fr" }}>
-                <Card>
-                    <SectionTitle>Témoignages</SectionTitle>
-                    <TwoCol>
-                        <Card>
-                            <strong>Julie</strong>
-                            <Muted>On urol woi... Le bièn bien et travaillnsa</Muted>
-                        </Card>
-                        <Card>
-                            <strong>David</strong>
-                            <Muted>Je resonne strsiac! Salsa</Muted>
-                        </Card>
-                        <Card>
-                            <strong>Sasia</strong>
-                            <Muted>—</Muted>
-                        </Card>
-                        <Card>
-                            <strong>Sophie</strong>
-                            <Muted>Me refereus une vendne — Dance</Muted>
-                        </Card>
-                    </TwoCol>
-                </Card>
-                <Card>
-                    <SectionTitle>Galerie</SectionTitle>
-                    <TwoCol>
-                        <div style={{ background: "#ead8c7", height: 120, borderRadius: 10 }} />
-                        <div style={{ background: "#ead8c7", height: 120, borderRadius: 10 }} />
-                        <div style={{ background: "#ead8c7", height: 120, borderRadius: 10 }} />
-                        <div style={{ background: "#ead8c7", height: 120, borderRadius: 10 }} />
-                    </TwoCol>
-                    <div style={{ marginTop: 10 }}>
-                        <SmallButton>Accéder à la galerie complète</SmallButton>
-                    </div>
-                </Card>
+                <Testimonials />
+                <Gallery />
             </Grid>
 
             {/* Learning */}
