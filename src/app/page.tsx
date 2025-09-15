@@ -64,6 +64,8 @@ const Card = styled.div`
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     padding: 1rem;
+    /* Allow grid items to shrink within CSS Grid to avoid horizontal overflow */
+    min-width: 0;
 `;
 
 const SectionTitle = styled.h2`

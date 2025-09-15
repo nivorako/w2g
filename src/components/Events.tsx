@@ -16,6 +16,8 @@ const Wrapper = styled.section`
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     padding: 1rem;
+    /* Allow grid item to shrink so it doesn't force page-wide overflow */
+    min-width: 0;
 `;
 
 const SectionTitle = styled.h2`
@@ -25,12 +27,20 @@ const SectionTitle = styled.h2`
     margin-bottom: 0.6rem;
 `;
 
+const TableContainer = styled.div`
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+`;
+
 const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     font-size: 0.95rem;
     td, th { padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); }
     th { text-align: left; color: var(--primary, #cf3201); font-weight: 700; }
+    td, th { word-wrap: break-word; overflow-wrap: anywhere; }
 `;
 
 export default function Events({ items }: { items?: EventItem[] }) {
@@ -43,28 +53,30 @@ export default function Events({ items }: { items?: EventItem[] }) {
     return (
         <Wrapper>
             <SectionTitle>Événements à venir</SectionTitle>
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Ville</th>
-                        <th>Style</th>
-                        <th>Niveau</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((e) => (
-                        <tr key={e.id}>
-                            <td>{e.date}</td>
-                            <td>{e.city}</td>
-                            <td>{e.style}</td>
-                            <td>{e.level}</td>
-                            <td><Button size="sm" variant="outline">Détails</Button></td>
+            <TableContainer>
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Ville</th>
+                            <th>Style</th>
+                            <th>Niveau</th>
+                            <th></th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {data.map((e) => (
+                            <tr key={e.id}>
+                                <td>{e.date}</td>
+                                <td>{e.city}</td>
+                                <td>{e.style}</td>
+                                <td>{e.level}</td>
+                                <td><Button size="sm" variant="outline">Détails</Button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </TableContainer>
             <div style={{ marginTop: 10 }}>
                 <Button size="sm" variant="primary">Voir tous les évènements</Button>
             </div>
