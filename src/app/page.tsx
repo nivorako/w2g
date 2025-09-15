@@ -59,6 +59,13 @@ const Grid = styled.section`
     }
 `;
 
+const TwoColGrid = styled(Grid)`
+    grid-template-columns: 1fr 1fr;
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr;
+    }
+`;
+
 const Card = styled.div`
     background: var(--paper, #f3e7d9);
     border: 1px solid rgba(0, 0, 0, 0.08);
@@ -120,10 +127,10 @@ export default function Home() {
             </Grid>
 
             {/* Testimonials + Gallery */}
-            <Grid style={{ gridTemplateColumns: "1fr 1fr" }}>
+            <TwoColGrid>
                 <Testimonials />
                 <Gallery />
-            </Grid>
+            </TwoColGrid>
 
             {/* Learning */}
             <Card style={{ marginTop: 18 }}>
