@@ -62,10 +62,22 @@ const Nav = styled.nav<{ $open: boolean }>`
         a {
             color: var(--ink, #5a3a2a);
             font-size: 1.1rem;
+            -webkit-tap-highlight-color: rgba(207, 50, 1, 0.15);
         }
 
         a:hover {
             color: var(--primary, #cf3201);
+        }
+
+        /* Touch feedback (mobile doesn't trigger :hover reliably) */
+        a:active {
+            color: var(--primary, #cf3201);
+        }
+
+        /* Keyboard accessibility on mobile/desktop */
+        a:focus-visible {
+            outline: 2px solid var(--primary, #cf3201);
+            outline-offset: 2px;
         }
     }
 `;
