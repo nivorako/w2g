@@ -6,9 +6,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
 const Wrapper = styled.main`
-  max-width: 420px;
-  margin: 2rem auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 1.25rem;
+
+  /* Constrain inner content width */
+  & > * {
+    width: 100%;
+    max-width: 420px;
+  }
 `;
 
 const Title = styled.h1`
@@ -77,6 +85,7 @@ export default function LoginPage() {
 
   return (
     <Wrapper>
+      <div>
       <Title>Connexion</Title>
       <form onSubmit={onSubmit}>
         <Field>
@@ -90,6 +99,7 @@ export default function LoginPage() {
         {error && <ErrorMsg>{error}</ErrorMsg>}
         <Btn type="submit" disabled={loading}>{loading ? "Connexion…" : "Se connecter"}</Btn>
       </form>
+      </div>
     </Wrapper>
   );
 }

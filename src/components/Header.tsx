@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { BsFillPersonFill } from "react-icons/bs";
 
 const HeaderRoot = styled.header`
     position: sticky;
@@ -48,25 +50,28 @@ const Nav = styled.nav<{ $open: boolean }>`
 
     /* Mobile behavior */
     @media (max-width: 768px) {
+        width: 50%;
         position: fixed;
         inset: 0;
         z-index: 20;
-        background: #ffffff;
-        color: var(--ink, #5a3a2a);
+        background: var(--primary, #cf3201);
+        color: #fff;
         flex-direction: column;
         align-items: flex-start;
         padding: 5rem 1.5rem 2rem;
         gap: 1.25rem;
         display: ${(p) => (p.$open ? "flex" : "none")};
+        right: 0;
+        left: auto;
 
         a {
-            color: var(--ink, #5a3a2a);
+            color: #fff;
             font-size: 1.1rem;
             -webkit-tap-highlight-color: rgba(207, 50, 1, 0.15);
         }
 
         a:hover {
-            color: var(--primary, #cf3201);
+            color: var(--secondary, #ff7642);
         }
 
         /* Touch feedback (mobile doesn't trigger :hover reliably) */
@@ -139,15 +144,106 @@ const CloseBtn = styled.button`
     span::after { transform: rotate(-45deg); }
 `;
 
+const Greeter = styled.span`
+    color: #fff;
+    font-weight: 600;
+`;
+
+const PersonBtn = styled.button`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+    &:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+`;
+
+const UserMenuWrap = styled.div`
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    z-index: 40; /* ensure above header content */
+
+    /* Reveal submenu on hover or when any child has focus */
+    &:hover > .submenu,
+    &:focus-within > .submenu {
+        display: flex;
+    }
+`;
+
+const SubMenu = styled.div.attrs({ className: "submenu" })`
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 180px;
+    display: none; /* hidden by default */
+    flex-direction: column;
+    gap: 0.35rem;
+    background: var(--primary, #ff7642);
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.16);
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    z-index: 50; /* above wrapper */
+
+    a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.35rem 0.25rem;
+        border-radius: 6px;
+    }
+
+    a:hover {
+        background: rgba(255,255,255,0.15);
+    }
+
+    
+
+    /* Mobile: white background and primary-colored text */
+    @media (max-width: 768px) {
+        background: #ffffff;
+        color: var(--primary, #cf3201);
+        border-top: 1px solid rgba(0,0,0,0.08);
+        box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+
+        a {
+            color: var(--primary, #cf3201);
+        }
+
+        a:hover {
+            background: rgba(207, 50, 1, 0.08);
+        }
+    }
+`;
+
 export default function Header() {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
+    const { data: session } = useSession();
+    const displayName = session?.user?.name ?? session?.user?.email ?? null;
+    
 
     // Ensure the menu closes on any route change
     useEffect(() => {
         if (open) setOpen(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
+
+
+    // (Removed) outside-click closing to keep behavior strictly on hover and link clicks
 
     return (
         <HeaderRoot>
@@ -170,8 +266,32 @@ export default function Header() {
                     <Link href="/galerie" prefetch onClick={() => setOpen(false)}>Galerie</Link>
                     <Link href="/apprentissage" prefetch onClick={() => setOpen(false)}>Apprentissage</Link>
                     <Link href="/contact" prefetch onClick={() => setOpen(false)}>Contact</Link>
-                    <Link href="/login" prefetch onClick={() => setOpen(false)}>Connexion</Link>
-                    <Link href="/register" prefetch onClick={() => setOpen(false)}>Inscription</Link>
+                    {displayName ? (
+                        <>
+                            <Greeter>Bonjour {displayName}</Greeter>
+                            <button
+                                onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
+                                style={{ background: "transparent", border: "1px solid #fff", color: "#fff", padding: "0.35rem 0.6rem", borderRadius: 6, cursor: "pointer" }}
+                            >
+                                Déconnexion
+                            </button>
+                        </>
+                    ) : (
+                        <UserMenuWrap>
+                            <PersonBtn
+                                aria-label="Menu utilisateur"
+                                aria-expanded={false}
+                                aria-controls="user-submenu"
+                                aria-haspopup="menu"
+                            >
+                                <BsFillPersonFill size={18} />
+                            </PersonBtn>
+                            <SubMenu id="user-submenu" role="menu">
+                                <Link href="/login" prefetch>Connexion</Link>
+                                <Link href="/register" prefetch>Inscription</Link>
+                            </SubMenu>
+                        </UserMenuWrap>
+                    )}
                 </Nav>
 
                 {/* Burger button (shows on mobile) */}

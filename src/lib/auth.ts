@@ -1,7 +1,6 @@
 import type { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import { initParse } from "@/lib/parse";
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
@@ -14,16 +13,21 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
-        if (!user) return null;
-        const ok = await bcrypt.compare(credentials.password, user.passwordHash);
-        if (!ok) return null;
-        const authedUser: User = {
-          id: user.id,
-          email: user.email,
-          name: user.name ?? null,
-        };
-        return authedUser;
+        const Parse = initParse();
+        try {
+          // Use email as username in Parse
+          const loggedIn = await Parse.User.logIn(credentials.email, credentials.password);
+          const authedUser: User = {
+            id: loggedIn.id,
+            email: loggedIn.get("email") ?? credentials.email,
+            name: loggedIn.get("name") ?? null,
+          };
+          // Optional: log out server-side session to avoid persisting Parse session on server
+          await Parse.User.logOut();
+          return authedUser;
+        } catch {
+          return null;
+        }
       },
     }),
   ],

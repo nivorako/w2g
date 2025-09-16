@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import { initParse } from "@/lib/parse";
 
 export const runtime = "nodejs";
 
@@ -12,18 +11,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email et mot de passe requis" }, { status: 400 });
     }
 
-    const exists = await prisma.user.findUnique({ where: { email } });
-    if (exists) {
-      return NextResponse.json({ error: "Un compte existe déjà avec cet email" }, { status: 409 });
+    const Parse = initParse();
+    const user = new Parse.User();
+    user.set("username", email);
+    user.set("password", password);
+    user.set("email", email);
+    if (name) user.set("name", name);
+    try {
+      const created = await user.signUp();
+      const payload = {
+        id: created.id,
+        email: created.get("email") ?? email,
+        name: created.get("name") ?? null,
+      };
+      return NextResponse.json(payload, { status: 201 });
+    } catch (err: unknown) {
+      // Parse duplicate errors: 202 (username taken), 203 (email taken)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const code = (err as any)?.code;
+      if (code === 202 || code === 203) {
+        return NextResponse.json({ error: "Un compte existe déjà avec cet email" }, { status: 409 });
+      }
+      throw err;
     }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({
-      data: { name: name ?? null, email, passwordHash },
-      select: { id: true, email: true, name: true },
-    });
-
-    return NextResponse.json(user, { status: 201 });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

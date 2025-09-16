@@ -6,9 +6,16 @@ import { useRouter } from "next/navigation";
 import styled from "styled-components";
 
 const Wrapper = styled.main`
-  max-width: 420px;
-  margin: 2rem auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 1.25rem;
+
+  & > * {
+    width: 100%;
+    max-width: 420px;
+  }
 `;
 
 const Title = styled.h1`
@@ -78,8 +85,12 @@ export default function RegisterPage() {
       } else {
         router.replace("/");
       }
-    } catch (err: any) {
-      setError(err?.message ?? "Erreur inconnue");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erreur inconnue");
+      }
     } finally {
       setLoading(false);
     }
@@ -87,6 +98,7 @@ export default function RegisterPage() {
 
   return (
     <Wrapper>
+      <div>
       <Title>Inscription</Title>
       <form onSubmit={onSubmit}>
         <Field>
@@ -104,6 +116,7 @@ export default function RegisterPage() {
         {error && <ErrorMsg>{error}</ErrorMsg>}
         <Btn type="submit" disabled={loading}>{loading ? "Création…" : "Créer un compte"}</Btn>
       </form>
+      </div>
     </Wrapper>
   );
 }
