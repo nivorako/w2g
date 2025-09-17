@@ -144,11 +144,6 @@ const CloseBtn = styled.button`
     span::after { transform: rotate(-45deg); }
 `;
 
-const Greeter = styled.span`
-    color: #fff;
-    font-weight: 600;
-`;
-
 const PersonBtn = styled.button`
     display: inline-flex;
     align-items: center;
@@ -268,7 +263,7 @@ export default function Header() {
                     <Link href="/contact" prefetch onClick={() => setOpen(false)}>Contact</Link>
                     {displayName ? (
                         <>
-                            <Greeter>Bonjour {displayName}</Greeter>
+                            
                             <button
                                 onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
                                 style={{ background: "transparent", border: "1px solid #fff", color: "#fff", padding: "0.35rem 0.6rem", borderRadius: 6, cursor: "pointer" }}

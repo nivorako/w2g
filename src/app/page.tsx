@@ -1,5 +1,7 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+
 import styled from "styled-components";
 import Image from "next/image";
 import Testimonials from "@/components/Testimonials";
@@ -46,7 +48,7 @@ const HeroTitle = styled.h1`
 
 const CTA = styled(Button).attrs({ size: "lg" as const, variant: "primary" as const })`
     /* prevent flex container from stretching it to full width */
-    align-self: flex-start;
+    align-self: center;
 `;
 
 const Grid = styled.section`
@@ -91,8 +93,18 @@ const Muted = styled.p`
 const SmallButton = styled(Button).attrs({ size: "sm" as const, variant: "outline" as const })``;
 
 export default function Home() {
+    const { data: session } = useSession();
+    console.log("session :", session?.user.name);
     return (
         <Page>
+             {session?.user.name && (
+                <p style={{ 
+                    color: "var(--primary, #cf3201)", 
+                    textAlign: "end"
+                }}>
+                    Bienvenu (e) {session?.user.name}
+                </p>
+            )}
             {/* Hero */}
             <HeroCard>
                 <Image
