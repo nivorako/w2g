@@ -16,6 +16,7 @@ export const authOptions: NextAuthOptions = {
             if (!credentials?.email || !credentials?.password) return null;
             const Parse = initParse();
             try {
+            console.log("credentials :", credentials);
             // Use email as username in Parse
             const loggedIn = await Parse.User.logIn(credentials.email, credentials.password);
             const authedUser: User = {
