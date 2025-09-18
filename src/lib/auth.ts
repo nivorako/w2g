@@ -4,6 +4,7 @@ import { initParse } from "@/lib/parse";
 
 export const authOptions: NextAuthOptions = {
     session: { strategy: "jwt" },
+    debug: true,
     providers: [
         CredentialsProvider({
         name: "Credentials",
@@ -51,6 +52,26 @@ export const authOptions: NextAuthOptions = {
             session.user.id = token.id;
         }
         return session;
+        },
+    },
+    events: {
+        async signIn(message) {
+            console.log("[NextAuth events.signIn]", {
+                user: !!message.user,
+                accountProvider: message.account?.provider,
+                isNewUser: message.isNewUser,
+            });
+        },
+    },
+    logger: {
+        error(code, metadata) {
+            console.error("[NextAuth logger.error]", code, metadata);
+        },
+        warn(code) {
+            console.warn("[NextAuth logger.warn]", code);
+        },
+        debug(code, metadata) {
+            console.log("[NextAuth logger.debug]", code, metadata);
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
