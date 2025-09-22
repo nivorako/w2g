@@ -26,8 +26,8 @@ const TwoCol = styled.div`
 `;
 
 const ItemCard = styled.div`
-    background: rgba(255,255,255,0.6);
-    border: 1px solid rgba(0,0,0,0.06);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 10px;
     padding: 0.75rem;
     color: var(--ink, #5a3a2a);

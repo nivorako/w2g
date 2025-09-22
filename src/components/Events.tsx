@@ -38,9 +38,21 @@ const Table = styled.table`
     border-collapse: collapse;
     table-layout: fixed;
     font-size: 0.95rem;
-    td, th { padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.06); }
-    th { text-align: left; color: var(--primary, #cf3201); font-weight: 700; }
-    td, th { word-wrap: break-word; overflow-wrap: anywhere; }
+    td,
+    th {
+        padding: 8px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    th {
+        text-align: left;
+        color: var(--primary, #cf3201);
+        font-weight: 700;
+    }
+    td,
+    th {
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+    }
 `;
 
 export default function Events({ items }: { items?: EventItem[] }) {
@@ -71,14 +83,20 @@ export default function Events({ items }: { items?: EventItem[] }) {
                                 <td>{e.city}</td>
                                 <td>{e.style}</td>
                                 <td>{e.level}</td>
-                                <td><Button size="sm" variant="outline">Détails</Button></td>
+                                <td>
+                                    <Button size="sm" variant="outline">
+                                        Détails
+                                    </Button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
             </TableContainer>
             <div style={{ marginTop: 10 }}>
-                <Button size="sm" variant="primary">Voir tous les évènements</Button>
+                <Button size="sm" variant="primary">
+                    Voir tous les évènements
+                </Button>
             </div>
         </Wrapper>
     );

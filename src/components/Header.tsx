@@ -139,9 +139,15 @@ const CloseBtn = styled.button`
         height: 2px;
         background: #000;
     }
-    span { background: transparent; }
-    span::before { transform: rotate(45deg); }
-    span::after { transform: rotate(-45deg); }
+    span {
+        background: transparent;
+    }
+    span::before {
+        transform: rotate(45deg);
+    }
+    span::after {
+        transform: rotate(-45deg);
+    }
 `;
 
 const PersonBtn = styled.button`
@@ -187,10 +193,10 @@ const SubMenu = styled.div.attrs({ className: "submenu" })`
     gap: 0.35rem;
     background: var(--primary, #ff7642);
     color: #fff;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.16);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16);
     padding: 0.6rem 0.75rem;
     border-radius: 8px;
-    border-top: 1px solid rgba(255,255,255,0.25);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
     z-index: 50; /* above wrapper */
 
     a {
@@ -202,17 +208,15 @@ const SubMenu = styled.div.attrs({ className: "submenu" })`
     }
 
     a:hover {
-        background: rgba(255,255,255,0.15);
+        background: rgba(255, 255, 255, 0.15);
     }
-
-    
 
     /* Mobile: white background and primary-colored text */
     @media (max-width: 768px) {
         background: #ffffff;
         color: var(--primary, #cf3201);
-        border-top: 1px solid rgba(0,0,0,0.08);
-        box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
 
         a {
             color: var(--primary, #cf3201);
@@ -229,14 +233,12 @@ export default function Header() {
     const pathname = usePathname();
     const { data: session } = useSession();
     const displayName = session?.user?.name ?? session?.user?.email ?? null;
-    
 
     // Ensure the menu closes on any route change
     useEffect(() => {
         if (open) setOpen(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
-
 
     // (Removed) outside-click closing to keep behavior strictly on hover and link clicks
 
@@ -256,17 +258,36 @@ export default function Header() {
                             <span />
                         </CloseBtn>
                     )}
-                    <Link href="/a-propos" prefetch onClick={() => setOpen(false)}>À propos</Link>
-                    <Link href="/evenements" prefetch onClick={() => setOpen(false)}>Événements</Link>
-                    <Link href="/galerie" prefetch onClick={() => setOpen(false)}>Galerie</Link>
-                    <Link href="/apprentissage" prefetch onClick={() => setOpen(false)}>Apprentissage</Link>
-                    <Link href="/contact" prefetch onClick={() => setOpen(false)}>Contact</Link>
+                    <Link href="/a-propos" prefetch onClick={() => setOpen(false)}>
+                        À propos
+                    </Link>
+                    <Link href="/evenements" prefetch onClick={() => setOpen(false)}>
+                        Événements
+                    </Link>
+                    <Link href="/galerie" prefetch onClick={() => setOpen(false)}>
+                        Galerie
+                    </Link>
+                    <Link href="/apprentissage" prefetch onClick={() => setOpen(false)}>
+                        Apprentissage
+                    </Link>
+                    <Link href="/contact" prefetch onClick={() => setOpen(false)}>
+                        Contact
+                    </Link>
                     {displayName ? (
                         <>
-                            
                             <button
-                                onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
-                                style={{ background: "transparent", border: "1px solid #fff", color: "#fff", padding: "0.35rem 0.6rem", borderRadius: 6, cursor: "pointer" }}
+                                onClick={() => {
+                                    setOpen(false);
+                                    signOut({ callbackUrl: "/" });
+                                }}
+                                style={{
+                                    background: "transparent",
+                                    border: "1px solid #fff",
+                                    color: "#fff",
+                                    padding: "0.35rem 0.6rem",
+                                    borderRadius: 6,
+                                    cursor: "pointer",
+                                }}
                             >
                                 Déconnexion
                             </button>
@@ -282,8 +303,9 @@ export default function Header() {
                                 <BsFillPersonFill size={18} />
                             </PersonBtn>
                             <SubMenu id="user-submenu" role="menu">
-                                <Link href="/login" prefetch>Connexion</Link>
-                                <Link href="/register" prefetch>Inscription</Link>
+                                <Link href="/login" prefetch>
+                                    Connexion
+                                </Link>
                             </SubMenu>
                         </UserMenuWrap>
                     )}
@@ -299,11 +321,21 @@ export default function Header() {
                 >
                     {open ? (
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            <path
+                                d="M6 6L18 18M6 18L18 6"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                            />
                         </svg>
                     ) : (
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M3 6H21M3 12H21M3 18H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            <path
+                                d="M3 6H21M3 12H21M3 18H21"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                            />
                         </svg>
                     )}
                 </Burger>

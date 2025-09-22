@@ -35,7 +35,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
 ## Formulaire de contact — Email via Nodemailer + Gmail
 
 Cette app inclut une route API `src/app/api/contact/route.ts` qui envoie un email via Gmail grâce à Nodemailer.

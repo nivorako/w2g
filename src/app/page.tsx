@@ -92,16 +92,26 @@ const Muted = styled.p`
 
 const SmallButton = styled(Button).attrs({ size: "sm" as const, variant: "outline" as const })``;
 
+/**
+ * Page component for the home page.
+ *
+ * Displays a hero card with an overlay, a grid of sections for About and Events,
+ * a two-column grid for Testimonials and Gallery, and a section for learning.
+ *
+ * @returns {React.ReactElement} The page content.
+ */
 export default function Home() {
     const { data: session } = useSession();
     console.log("session :", session?.user.name);
     return (
         <Page>
-             {session?.user.name && (
-                <p style={{ 
-                    color: "var(--primary, #cf3201)", 
-                    textAlign: "end"
-                }}>
+            {session?.user.name && (
+                <p
+                    style={{
+                        color: "var(--primary, #cf3201)",
+                        textAlign: "end",
+                    }}
+                >
                     Bienvenu (e) {session?.user.name}
                 </p>
             )}
@@ -117,7 +127,7 @@ export default function Home() {
                 />
                 <HeroOverlay>
                     <HeroTitle>
-                        Danser, apprendre, partager 
+                        Danser, apprendre, partager
                         <br />
                         We are together !
                     </HeroTitle>

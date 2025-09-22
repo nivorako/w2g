@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     },
 };
 
+/**
+ * The root layout component that wraps the entire app.
+ * It includes the header and footer components, as well as the StyledComponentsRegistry and Providers components.
+ * @param {ReactNode} children - The children elements to be rendered inside the app.
+ * @returns {JSX.Element} - The root layout element.
+ */
 export default function RootLayout({
     children,
 }: Readonly<{

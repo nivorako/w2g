@@ -39,28 +39,26 @@ export type GalleryItem = {
 };
 
 export default function Gallery({ items = [] as GalleryItem[] }) {
-    const data = items.length
-        ? items
-        : [
-              { id: "1" },
-              { id: "2" },
-              { id: "3" },
-              { id: "4" },
-          ];
+    const data = items.length ? items : [{ id: "1" }, { id: "2" }, { id: "3" }, { id: "4" }];
 
     return (
         <Wrapper>
             <SectionTitle>Galerie</SectionTitle>
             <Grid>
-                {data.map((it) => (
+                {data.map((it) =>
                     it.src ? (
                         <div key={it.id} style={{ position: "relative", height: 120 }}>
-                            <Image src={it.src} alt={it.alt ?? ""} fill style={{ objectFit: "cover", borderRadius: 10 }} />
+                            <Image
+                                src={it.src}
+                                alt={it.alt ?? ""}
+                                fill
+                                style={{ objectFit: "cover", borderRadius: 10 }}
+                            />
                         </div>
                     ) : (
                         <Placeholder key={it.id} />
-                    )
-                ))}
+                    ),
+                )}
             </Grid>
         </Wrapper>
     );
