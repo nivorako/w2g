@@ -20,9 +20,7 @@ export function initParse() {
         const masterKey = process.env.PARSE_MASTER_KEY;
 
         if (!appId || !jsKey || !serverURL) {
-            throw new Error(
-                "Parse env vars missing: PARSE_APP_ID, PARSE_JS_KEY, PARSE_SERVER_URL",
-            );
+            throw new Error("Parse env vars missing: PARSE_APP_ID, PARSE_JS_KEY, PARSE_SERVER_URL");
         }
         if (!masterKey) {
             // Many server-side operations here use useMasterKey; surface a clear error

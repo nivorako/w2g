@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { BsFillPersonFill } from "react-icons/bs";
 
@@ -211,6 +211,21 @@ const SubMenu = styled.div.attrs({ className: "submenu" })`
         background: rgba(255, 255, 255, 0.15);
     }
 
+    /* Allow buttons as submenu items */
+    button.submenu-item {
+        text-align: left;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.35rem 0.25rem;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button.submenu-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
     /* Mobile: white background and primary-colored text */
     @media (max-width: 768px) {
         background: #ffffff;
@@ -225,12 +240,73 @@ const SubMenu = styled.div.attrs({ className: "submenu" })`
         a:hover {
             background: rgba(207, 50, 1, 0.08);
         }
+
+        button.submenu-item {
+            color: var(--primary, #cf3201);
+        }
+        button.submenu-item:hover {
+            background: rgba(207, 50, 1, 0.08);
+        }
     }
+`;
+
+const ModalOverlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+`;
+
+const ModalBox = styled.div`
+    width: 90%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+`;
+
+const ModalTitle = styled.h3`
+    margin: 0 0 0.5rem 0;
+    color: #111;
+`;
+
+const ModalText = styled.p`
+    margin: 0.25rem 0 0.75rem 0;
+    color: #333;
+`;
+
+const ModalActions = styled.div`
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+`;
+
+const Btn = styled.button<{ $variant?: "primary" | "ghost" }>`
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid ${(p) => (p.$variant === "primary" ? "var(--primary, #cf3201)" : "#ccc")};
+    background: ${(p) => (p.$variant === "primary" ? "var(--primary, #cf3201)" : "#fff")};
+    color: ${(p) => (p.$variant === "primary" ? "#fff" : "#111")};
+    cursor: pointer;
+    font-weight: 600;
 `;
 
 export default function Header() {
     const [open, setOpen] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteStep, setDeleteStep] = useState<"confirm" | "otp">("confirm");
+    const [otp, setOtp] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [banner, setBanner] = useState<string | null>(null);
     const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const { data: session } = useSession();
     const displayName = session?.user?.name ?? session?.user?.email ?? null;
 
@@ -239,6 +315,20 @@ export default function Header() {
         if (open) setOpen(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
+
+    // Show success banner when redirected after account deletion
+    useEffect(() => {
+        const deleted = searchParams?.get("account_deleted");
+        if (deleted) {
+            setBanner("Votre compte a bien été supprimé");
+            // Clean the URL (remove query param)
+            router.replace(pathname);
+            const t = setTimeout(() => setBanner(null), 6000);
+            return () => clearTimeout(t);
+        }
+        return;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, pathname]);
 
     // (Removed) outside-click closing to keep behavior strictly on hover and link clicks
 
@@ -274,24 +364,38 @@ export default function Header() {
                         Contact
                     </Link>
                     {displayName ? (
-                        <>
-                            <button
-                                onClick={() => {
-                                    setOpen(false);
-                                    signOut({ callbackUrl: "/" });
-                                }}
-                                style={{
-                                    background: "transparent",
-                                    border: "1px solid #fff",
-                                    color: "#fff",
-                                    padding: "0.35rem 0.6rem",
-                                    borderRadius: 6,
-                                    cursor: "pointer",
-                                }}
+                        <UserMenuWrap>
+                            <PersonBtn
+                                aria-label="Menu utilisateur"
+                                aria-expanded={false}
+                                aria-controls="user-submenu"
+                                aria-haspopup="menu"
                             >
-                                Déconnexion
-                            </button>
-                        </>
+                                <BsFillPersonFill size={18} />
+                            </PersonBtn>
+                            <SubMenu id="user-submenu" role="menu">
+                                <button
+                                    className="submenu-item"
+                                    onClick={() => {
+                                        setOpen(false);
+                                        signOut({ callbackUrl: "/" });
+                                    }}
+                                >
+                                    Déconnexion
+                                </button>
+                                <button
+                                    className="submenu-item"
+                                    onClick={() => {
+                                        setError(null);
+                                        setOtp("");
+                                        setDeleteStep("confirm");
+                                        setShowDeleteModal(true);
+                                    }}
+                                >
+                                    Supprimer mon compte
+                                </button>
+                            </SubMenu>
+                        </UserMenuWrap>
                     ) : (
                         <UserMenuWrap>
                             <PersonBtn
@@ -340,6 +444,153 @@ export default function Header() {
                     )}
                 </Burger>
             </HeaderInner>
+            {banner && (
+                <div
+                    role="status"
+                    aria-live="polite"
+                    style={{
+                        background: "#e6ffed",
+                        color: "#034d1f",
+                        borderTop: "1px solid #c6f6d5",
+                        borderBottom: "1px solid #c6f6d5",
+                        padding: "0.5rem 1rem",
+                        fontWeight: 600,
+                    }}
+                >
+                    {banner}
+                </div>
+            )}
+            {showDeleteModal && (
+                <ModalOverlay onClick={() => !loading && setShowDeleteModal(false)}>
+                    <ModalBox onClick={(e) => e.stopPropagation()}>
+                        {deleteStep === "confirm" ? (
+                            <>
+                                <ModalTitle>Suppression de compte</ModalTitle>
+                                <ModalText>
+                                    Êtes-vous sûr de vouloir supprimer votre compte ? Cette action
+                                    est définitive.
+                                </ModalText>
+                                {error && (
+                                    <ModalText style={{ color: "#b00020" }}>{error}</ModalText>
+                                )}
+                                <ModalActions>
+                                    <Btn
+                                        onClick={() => setShowDeleteModal(false)}
+                                        disabled={loading}
+                                    >
+                                        Annuler
+                                    </Btn>
+                                    <Btn
+                                        $variant="primary"
+                                        onClick={async () => {
+                                            try {
+                                                setLoading(true);
+                                                setError(null);
+                                                const res = await fetch(
+                                                    "/api/account/delete/request",
+                                                    {
+                                                        method: "POST",
+                                                    },
+                                                );
+                                                if (!res.ok) {
+                                                    const j: { error?: string } = await res
+                                                        .json()
+                                                        .catch(() => ({}) as { error?: string });
+                                                    throw new Error(
+                                                        j.error || "Échec d'envoi du code",
+                                                    );
+                                                }
+                                                setDeleteStep("otp");
+                                            } catch (e: unknown) {
+                                                const msg =
+                                                    e instanceof Error
+                                                        ? e.message
+                                                        : "Erreur inconnue";
+                                                setError(msg);
+                                            } finally {
+                                                setLoading(false);
+                                            }
+                                        }}
+                                        disabled={loading}
+                                    >
+                                        {loading ? "Envoi..." : "Oui, envoyer le code"}
+                                    </Btn>
+                                </ModalActions>
+                            </>
+                        ) : (
+                            <>
+                                <ModalTitle>Entrez le code reçu par email</ModalTitle>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    placeholder="Code à 6 chiffres"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                                    style={{
+                                        width: "100%",
+                                        padding: "0.6rem 0.7rem",
+                                        borderRadius: 8,
+                                        border: "1px solid #ccc",
+                                        fontSize: "1rem",
+                                        letterSpacing: "0.2em",
+                                    }}
+                                />
+                                {error && (
+                                    <ModalText style={{ color: "#b00020" }}>{error}</ModalText>
+                                )}
+                                <ModalActions>
+                                    <Btn
+                                        onClick={() => setShowDeleteModal(false)}
+                                        disabled={loading}
+                                    >
+                                        Annuler
+                                    </Btn>
+                                    <Btn
+                                        $variant="primary"
+                                        onClick={async () => {
+                                            try {
+                                                setLoading(true);
+                                                setError(null);
+                                                const res = await fetch(
+                                                    "/api/account/delete/confirm",
+                                                    {
+                                                        method: "POST",
+                                                        headers: {
+                                                            "Content-Type": "application/json",
+                                                        },
+                                                        body: JSON.stringify({ code: otp }),
+                                                    },
+                                                );
+                                                if (!res.ok) {
+                                                    const j: { error?: string } = await res
+                                                        .json()
+                                                        .catch(() => ({}) as { error?: string });
+                                                    throw new Error(j.error || "Code invalide");
+                                                }
+                                                // success: sign out with banner flag and close
+                                                setShowDeleteModal(false);
+                                                signOut({ callbackUrl: "/?account_deleted=1" });
+                                            } catch (e: unknown) {
+                                                const msg =
+                                                    e instanceof Error
+                                                        ? e.message
+                                                        : "Erreur inconnue";
+                                                setError(msg);
+                                            } finally {
+                                                setLoading(false);
+                                            }
+                                        }}
+                                        disabled={loading || otp.length < 6}
+                                    >
+                                        {loading ? "Vérification..." : "Confirmer la suppression"}
+                                    </Btn>
+                                </ModalActions>
+                            </>
+                        )}
+                    </ModalBox>
+                </ModalOverlay>
+            )}
         </HeaderRoot>
     );
 }

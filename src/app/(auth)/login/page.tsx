@@ -84,17 +84,17 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [info, setInfo] = useState<string | null>(null);
 
-/**
- * Post a JSON object to a given URL.
- *
- * The function will return a Promise that resolves to the parsed JSON response.
- * If the response status is not OK (200-299), it will throw an Error with the error message if it can be parsed from the response body, otherwise it will throw an Error with the status code.
- *
- * @template T
- * @param {string} url The URL to send the POST request to.
- * @param {unknown} body The JSON object to send in the request body.
- * @returns {Promise<T>} A promise that resolves to the parsed JSON response.
- */
+    /**
+     * Post a JSON object to a given URL.
+     *
+     * The function will return a Promise that resolves to the parsed JSON response.
+     * If the response status is not OK (200-299), it will throw an Error with the error message if it can be parsed from the response body, otherwise it will throw an Error with the status code.
+     *
+     * @template T
+     * @param {string} url The URL to send the POST request to.
+     * @param {unknown} body The JSON object to send in the request body.
+     * @returns {Promise<T>} A promise that resolves to the parsed JSON response.
+     */
     async function postJSON<T>(url: string, body: unknown): Promise<T> {
         const res = await fetch(url, {
             method: "POST",
@@ -234,10 +234,10 @@ export default function LoginPage() {
         step === "email"
             ? "Connexion"
             : step === "password"
-            ? "Connexion"
-            : step === "otp"
-            ? "Vérification de l'email"
-            : "Création du mot de passe";
+              ? "Connexion"
+              : step === "otp"
+                ? "Vérification de l'email"
+                : "Création du mot de passe";
 
     return (
         <Wrapper>
