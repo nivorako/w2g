@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { BsFillPersonFill } from "react-icons/bs";
 
@@ -303,10 +303,7 @@ export default function Header() {
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [banner, setBanner] = useState<string | null>(null);
     const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const router = useRouter();
     const { data: session } = useSession();
     const displayName = session?.user?.name ?? session?.user?.email ?? null;
 
@@ -316,19 +313,7 @@ export default function Header() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
 
-    // Show success banner when redirected after account deletion
-    useEffect(() => {
-        const deleted = searchParams?.get("account_deleted");
-        if (deleted) {
-            setBanner("Votre compte a bien été supprimé");
-            // Clean the URL (remove query param)
-            router.replace(pathname);
-            const t = setTimeout(() => setBanner(null), 6000);
-            return () => clearTimeout(t);
-        }
-        return;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, pathname]);
+    // Success banner for account deletion moved to Home page
 
     // (Removed) outside-click closing to keep behavior strictly on hover and link clicks
 
@@ -444,22 +429,7 @@ export default function Header() {
                     )}
                 </Burger>
             </HeaderInner>
-            {banner && (
-                <div
-                    role="status"
-                    aria-live="polite"
-                    style={{
-                        background: "#e6ffed",
-                        color: "#034d1f",
-                        borderTop: "1px solid #c6f6d5",
-                        borderBottom: "1px solid #c6f6d5",
-                        padding: "0.5rem 1rem",
-                        fontWeight: 600,
-                    }}
-                >
-                    {banner}
-                </div>
-            )}
+            {/* Account deletion success banner is handled in Home */}
             {showDeleteModal && (
                 <ModalOverlay onClick={() => !loading && setShowDeleteModal(false)}>
                     <ModalBox onClick={(e) => e.stopPropagation()}>

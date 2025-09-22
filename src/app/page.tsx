@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import styled from "styled-components";
 import Image from "next/image";
@@ -102,9 +104,39 @@ const SmallButton = styled(Button).attrs({ size: "sm" as const, variant: "outlin
  */
 export default function Home() {
     const { data: session } = useSession();
-    console.log("session :", session?.user.name);
+    const [banner, setBanner] = useState<string | null>(null);
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
+
+    // Show success banner when redirected after account deletion (moved from Header)
+    useEffect(() => {
+        const deleted = searchParams?.get("account_deleted");
+        if (deleted) {
+            setBanner("Votre compte a bien été supprimé");
+            // Clean the URL (remove query param)
+            router.replace(pathname);
+            const t = setTimeout(() => setBanner(null), 4000);
+            return () => clearTimeout(t);
+        }
+        return;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, pathname]);
     return (
         <Page>
+            {banner && (
+                <p
+                    role="status"
+                    aria-live="polite"
+                    style={{
+                        color: "var(--primary, #cf3201)",
+                        textAlign: "end",
+                        fontWeight: 600,
+                    }}
+                >
+                    {banner}
+                </p>
+            )}
             {session?.user.name && (
                 <p
                     style={{
