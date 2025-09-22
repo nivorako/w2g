@@ -60,6 +60,8 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 // `id` is added via module augmentation in src/types/next-auth.d.ts
                 token.id = user.id as string;
+                // Persist user's name on the token so it can be mapped to the session later
+                if (user.name) token.name = user.name;
             }
             return token;
         },
@@ -71,9 +73,11 @@ export const authOptions: NextAuthOptions = {
          * @returns {session} - The modified session object.
          */
         async session({ session, token }) {
-            if (session.user && token?.id) {
+            if (session.user) {
                 // `id` is added via module augmentation in src/types/next-auth.d.ts
-                session.user.id = token.id;
+                if (token?.id) session.user.id = token.id;
+                // Map name from token to session for easy client access
+                if (token?.name && !session.user.name) session.user.name = token.name;
             }
             return session;
         },

@@ -80,6 +80,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [otp, setOtp] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [newName, setNewName] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [info, setInfo] = useState<string | null>(null);
@@ -205,6 +206,7 @@ export default function LoginPage() {
         setLoading(true);
         try {
             await postJSON("/api/register", {
+                name: newName || undefined,
                 email,
                 password: newPassword,
                 code: otp,
@@ -312,7 +314,17 @@ export default function LoginPage() {
 
                 {step === "setPassword" && (
                     <form onSubmit={onSubmitRegister}>
-                        <p>Créez votre mot de passe pour finaliser l&apos;inscription.</p>
+                        <p>Renseignez votre nom et créez votre mot de passe pour finaliser l&apos;inscription.</p>
+                        <Field>
+                            <label htmlFor="newName">Nom</label>
+                            <input
+                                id="newName"
+                                type="text"
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                                placeholder="Votre nom (optionnel)"
+                            />
+                        </Field>
                         <Field>
                             <label htmlFor="newPassword">Mot de passe</label>
                             <input
