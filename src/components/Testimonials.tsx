@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.section`
@@ -14,6 +15,21 @@ const SectionTitle = styled.h2`
     font-weight: 700;
     color: var(--primary, #cf3201);
     margin-bottom: 0.6rem;
+`;
+
+const HeaderRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+`;
+
+const CountBadge = styled.span`
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--ink, #5a3a2a);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
 `;
 
 const TwoCol = styled.div`
@@ -37,28 +53,88 @@ const Muted = styled.p`
     color: #6b5b53;
 `;
 
+type Testimonial = {
+    id: string;
+    author: string;
+    message: string;
+    createdAt: string; // ISO
+    senderId?: string | null;
+};
+
 export default function Testimonials() {
+    const [items, setItems] = useState<Testimonial[]>([]);
+    const [count, setCount] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function load() {
+            try {
+                setLoading(true);
+                const res = await fetch("/api/testimonials", { cache: "no-store" });
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                if (!cancelled) {
+                    setItems(Array.isArray(data.items) ? data.items : []);
+                    setCount(typeof data.count === "number" ? data.count : 0);
+                }
+            } catch (err: unknown) {
+                const msg =
+                    err instanceof Error ? err.message : "Impossible de charger les témoignages";
+                if (!cancelled) setError(msg);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     return (
         <Wrapper>
-            <SectionTitle>Témoignages</SectionTitle>
-            <TwoCol>
-                <ItemCard>
-                    <strong>Julie</strong>
-                    <Muted>On urol woi... Le bièn bien et travaillnsa</Muted>
-                </ItemCard>
-                <ItemCard>
-                    <strong>David</strong>
-                    <Muted>Je resonne strsiac! Salsa</Muted>
-                </ItemCard>
-                <ItemCard>
-                    <strong>Sasia</strong>
-                    <Muted>—</Muted>
-                </ItemCard>
-                <ItemCard>
-                    <strong>Sophie</strong>
-                    <Muted>Me refereus une vendne — Dance</Muted>
-                </ItemCard>
-            </TwoCol>
+            <HeaderRow>
+                <SectionTitle>Ce que nos danseurs disent</SectionTitle>
+                <CountBadge>
+                    {count} message{count > 1 ? "s" : ""}
+                </CountBadge>
+            </HeaderRow>
+
+            {loading && <Muted>Chargement…</Muted>}
+            {error && !loading && <Muted>{error}</Muted>}
+
+            {!loading && !error && (
+                <TwoCol>
+                    {items.map((t) => {
+                        const date = new Date(t.createdAt);
+                        const formatted = isNaN(date.getTime())
+                            ? t.createdAt
+                            : date.toLocaleDateString("fr-FR", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "2-digit",
+                              });
+                        return (
+                            <ItemCard key={t.id}>
+                                <strong>
+                                    {t.author}
+
+                                    <span style={{ color: "#6b5b53", fontWeight: 500 }}>
+                                        {" "}
+                                        • {formatted}
+                                    </span>
+                                </strong>
+                                <Muted>{t.message}</Muted>
+                            </ItemCard>
+                        );
+                    })}
+                    {items.length === 0 && <Muted>Aucun témoignage pour l’instant.</Muted>}
+                </TwoCol>
+            )}
         </Wrapper>
     );
 }

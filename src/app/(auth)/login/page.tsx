@@ -314,7 +314,10 @@ export default function LoginPage() {
 
                 {step === "setPassword" && (
                     <form onSubmit={onSubmitRegister}>
-                        <p>Renseignez votre nom et créez votre mot de passe pour finaliser l&apos;inscription.</p>
+                        <p>
+                            Renseignez votre nom et créez votre mot de passe pour finaliser
+                            l&apos;inscription.
+                        </p>
                         <Field>
                             <label htmlFor="newName">Nom</label>
                             <input

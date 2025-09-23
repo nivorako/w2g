@@ -27,9 +27,12 @@ export function initParse() {
             throw new Error("Parse env var missing: PARSE_MASTER_KEY");
         }
 
-        // For Node SDK, pass masterKey as 3rd argument to enable useMasterKey operations
-        Parse.initialize(appId, jsKey, masterKey);
+        // Initialize with App ID and JS key (current SDK signature)
+        Parse.initialize(appId, jsKey);
         Parse.serverURL = serverURL;
+        // For Node usage, set masterKey on the SDK so { useMasterKey: true } works
+        // Types don't expose masterKey, so cast to a minimal interface instead of any.
+        (Parse as unknown as { masterKey: string }).masterKey = masterKey;
         initialized = true;
     }
     return Parse;

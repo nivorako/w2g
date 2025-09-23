@@ -25,15 +25,27 @@ export const authOptions: NextAuthOptions = {
                 const Parse = initParse();
                 try {
                     console.log("credentials :", credentials);
+                    const emailInput = credentials.email as string;
+                    const passwordInput = credentials.password as string;
                     // Use email as username in Parse
-                    const loggedIn = await Parse.User.logIn(
-                        credentials.email,
-                        credentials.password,
-                    );
+                    const loggedIn = await Parse.User.logIn(emailInput, passwordInput);
+                    const email: string | null =
+                        (loggedIn.get("email") as string | null | undefined) ?? emailInput ?? null;
+                    const name: string | null =
+                        (loggedIn.get("name") as string | null | undefined) ?? null;
+
+                    // Ensure we have a valid id (Parse type is string | undefined)
+                    const id = loggedIn.id;
+                    if (!id) {
+                        // Defensive: if something went wrong and id is missing, log out and abort
+                        await Parse.User.logOut();
+                        return null;
+                    }
+
                     const authedUser: User = {
-                        id: loggedIn.id,
-                        email: loggedIn.get("email") ?? credentials.email,
-                        name: loggedIn.get("name") ?? null,
+                        id,
+                        email,
+                        name,
                     };
                     console.log("authedUser :", authedUser);
                     // Optional: log out server-side session to avoid persisting Parse session on server
