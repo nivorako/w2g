@@ -12,10 +12,14 @@ import Events from "@/components/Events";
 import Button from "@/components/Button";
 
 const Page = styled.main`
+    width: 100%;
     max-width: 1200px;
-    margin: 1.25rem auto 2rem;
-    padding: 0 1rem;
+    margin: 0 auto;
+    padding: 0 2rem;
     color: var(--ink, #5a3a2a);
+    @media (max-width: 764px) {
+        padding: 0 1rem;
+    }
 `;
 
 const HeroCard = styled.section`
@@ -53,22 +57,7 @@ const CTA = styled(Button).attrs({ size: "lg" as const, variant: "primary" as co
     align-self: center;
 `;
 
-const Grid = styled.section`
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 18px;
-    margin-top: 10px;
-    @media (max-width: 900px) {
-        grid-template-columns: 1fr;
-    }
-`;
-
-const TwoColGrid = styled(Grid)`
-    grid-template-columns: 1fr 1fr;
-    @media (max-width: 900px) {
-        grid-template-columns: 1fr;
-    }
-`;
+/* Grilles retirées: sections désormais empilées en pleine largeur */
 
 const Card = styled.div`
     background: var(--paper, #f3e7d9);
@@ -84,6 +73,7 @@ const SectionTitle = styled.h2`
     font-weight: 700;
     color: var(--primary, #cf3201);
     margin-bottom: 0.6rem;
+    text-align: center;
 `;
 
 const Muted = styled.p`
@@ -167,26 +157,28 @@ export default function Home() {
                 </HeroOverlay>
             </HeroCard>
 
-            {/* Grid of sections: About + Events */}
-            <Grid>
-                <Card>
-                    <SectionTitle>Qui sommes-nous ?</SectionTitle>
-                    <Muted>Notre passion pour la danse</Muted>
-                    <div style={{ marginTop: 12 }}>
-                        <SmallButton>En savoir plus</SmallButton>
-                    </div>
-                </Card>
+            {/* Sections en pleine largeur, empilées */}
+            <Card>
+                <SectionTitle>Qui sommes-nous ?</SectionTitle>
+                <Muted>Notre passion pour la danse</Muted>
+                <div style={{ marginTop: 12 }}>
+                    <SmallButton>En savoir plus</SmallButton>
+                </div>
+            </Card>
 
+            <section style={{ marginTop: 18 }}>
                 <Events />
-            </Grid>
+            </section>
 
-            {/* Testimonials + Gallery */}
-            <TwoColGrid>
+            <section style={{ marginTop: 18 }}>
                 <Testimonials />
-                <Gallery />
-            </TwoColGrid>
+            </section>
 
-            {/* Learning */}
+            <section style={{ marginTop: 18 }}>
+                <Gallery />
+            </section>
+
+            {/* Apprentissage */}
             <Card style={{ marginTop: 18 }}>
                 <SectionTitle>Apprentissage</SectionTitle>
                 <Muted>Découvrez les danses caribéennes</Muted>

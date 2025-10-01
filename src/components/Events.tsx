@@ -25,6 +25,7 @@ const SectionTitle = styled.h2`
     font-weight: 700;
     color: var(--primary, #cf3201);
     margin-bottom: 0.6rem;
+    text-align: center;
 `;
 
 const TableContainer = styled.div`
