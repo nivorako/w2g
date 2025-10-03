@@ -194,7 +194,7 @@ const PhotoBox = styled.div`
     height: 96px;
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #fff;
+    background: var(--paper, #f3e7d9);
     color: #8b7b72;
     overflow: hidden;
     position: relative;
