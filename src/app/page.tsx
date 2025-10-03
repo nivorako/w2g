@@ -160,8 +160,30 @@ export default function Home() {
             {/* Sections en pleine largeur, empilées */}
             <Card>
                 <SectionTitle>Qui sommes-nous ?</SectionTitle>
-                <Muted>Notre passion pour la danse</Muted>
-                <div style={{ marginTop: 12 }}>
+                <Muted>
+                    Nous sommes une association passionnée par la danse caribéenne 
+                    et les liens humains qu’elle crée. Notre mission ? Offrir 
+                    un espace convivial où chacun peut apprendre à danser, 
+                    se rencontrer, partager des sourires et vivre des moments 
+                    authentiques.
+                </Muted>
+                <Muted>
+                    À travers des rencontres régulières, nous cultivons la joie, 
+                    le rythme et la chaleur des Caraïbes. Que vous soyez débutant 
+                    curieux ou danseur confirmé, vous trouverez chez nous bien plus 
+                    qu’un cours : 
+                    une communauté bienveillante, des échanges sincères et 
+                    des instants de pur plaisir.
+                </Muted>
+                <Muted>
+                    Rejoignez-nous et laissez-vous emporter par l’énergie du groupe, 
+                    la musique qui rassemble et la magie des pas partagés.
+                </Muted>
+                <div style={{ 
+                    marginTop: 12,
+                    textAlign: "center", 
+                    }}
+                >
                     <SmallButton>En savoir plus</SmallButton>
                 </div>
             </Card>

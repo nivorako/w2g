@@ -59,12 +59,12 @@ const Table = styled.table`
     }
 `;
 
-const EventsBTN = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
-`;
+// const EventsBTN = styled.div`
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     margin-top: 1rem;
+// `;
 
 // Modal styles
 const Backdrop = styled.div`
@@ -184,11 +184,11 @@ export default function Events({ items }: { items?: EventItem[] }) {
                     </tbody>
                 </Table>
             </TableContainer>
-            <EventsBTN>
+            {/* <EventsBTN>
                 <Button size="sm" variant="primary">
                     Voir tous les évènements
                 </Button>
-            </EventsBTN>
+            </EventsBTN> */}
 
             {selected && (
                 <Backdrop onClick={() => setSelected(null)} role="dialog" aria-modal="true">

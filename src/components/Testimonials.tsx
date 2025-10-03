@@ -380,7 +380,12 @@ export default function Testimonials() {
                                                     return (
                                                         <CardGrid>
                                                             <LeftPanel>
-                                                                <div style={{ width: "100%" }}>
+                                                                <div style={{ 
+                                                                    width: "100%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                }}>
                                                                     <PhotoBox>
                                                                         {photo ? (
                                                                             <Image
@@ -455,7 +460,13 @@ export default function Testimonials() {
                                                     return (
                                                         <CardGrid>
                                                             <LeftPanel>
-                                                                <div style={{ width: "100%" }}>
+                                                                <div style={{ 
+                                                                    width: "100%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    }}
+                                                                >
                                                                     <PhotoBox>
                                                                         {photo ? (
                                                                             <Image
